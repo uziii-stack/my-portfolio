@@ -47,7 +47,7 @@ export default function Home() {
       }
 
       else if (!deleting && subIndex === current.length) {
-        setTimeout(() => setDeleting(true), 2000); // ⏳ 3 sec text rukay ga phir delete start hoga
+        setTimeout(() => setDeleting(true), 2000); // text deletion time
       }
 
       else if (deleting && subIndex > 0) {
