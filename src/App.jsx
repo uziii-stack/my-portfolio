@@ -12,8 +12,6 @@ import Testimonials from "./sections/Testimonials";
 import Contact from "./sections/Contact";
 import Footer from "./sections/Footer";
 import ScrollToTop from "./components/ScrollToTop";
-
-// ⬇️ ADD THIS
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
