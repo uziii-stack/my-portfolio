@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ParticlesBackground from "../components/ParticlesBackground";
 import emailjs from "@emailjs/browser";
-import Astra from "../assets/astra.png";
+import Astra from "../assets/Astra.png";
 import toast from "react-hot-toast";
 
 const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
