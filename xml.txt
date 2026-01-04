@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://uzairbaig.netlify.app/sitemap.xml
