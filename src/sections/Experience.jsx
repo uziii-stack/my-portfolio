@@ -40,14 +40,14 @@ const experiences = [
 ];
 
 export default function Experience() {
-    const isMobile = useIsMobile(); // 🔥 FIXED
+    const isMobile = useIsMobile(); // FIXED
 
     return (
         <section
             id="experience"
             className="relative w-full min-h-[70vh] bg-black text-white overflow-hidden py-12 px-6 flex flex-col items-center"
         >
-            {/* 🔥 RESPONSIVE BLOB SYSTEM — now works perfectly */}
+            {/*  RESPONSIVE BLOB SYSTEM — now works perfectly */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* TOP LEFT BLOB */}
                 <div
