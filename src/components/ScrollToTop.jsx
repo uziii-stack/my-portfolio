@@ -69,7 +69,7 @@ export default function ScrollToTop() {
                 const home = document.querySelector("#home");
                 if (home) home.scrollIntoView({ behavior: "smooth" });
             }}
-            className={`fixed bottom-6 right-6 z-50 p-4 bg-white/10 backdrop-blur-lg 
+            className={`fixed bottom-6 left-6 z-50 p-4 bg-white/10 backdrop-blur-lg 
       rounded-full border border-white/20 shadow-lg 
       transition-all duration-300 hover:bg-white/20
       ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"}

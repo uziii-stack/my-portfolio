@@ -23,7 +23,7 @@ export default function OverlayMenu({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 flex items-center justify-center z-50"
+          className="fixed inset-0 flex items-center justify-center z-[100000]"
           style={{ backgroundColor: "rgba(0,0,0,0.95)" }}
           initial={{ opacity: 0, clipPath: `circle(0% at ${origin})` }}
           animate={{ opacity: 1, clipPath: `circle(150% at ${origin})` }}
