@@ -6,8 +6,9 @@ import Navbar from "./components/Navbar";
 import Home from "./sections/Home";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
+import Projects from "./sections/Projects"; // Existing Projects import
+
 import Experience from "./sections/Experience";
-import Projects from "./sections/Projects";
 import Testimonials from "./sections/Testimonials";
 import Contact from "./sections/Contact";
 import Footer from "./sections/Footer";
@@ -23,7 +24,7 @@ export default function App() {
       {/* GLOBAL TOASTER */}
       <Toaster position="top-right" />
 
-      {/* 🔥 INTRO ANIMATION (Auto hides after greetings) */}
+      {/*  INTRO ANIMATION (Auto hides after greetings) */}
       {showIntro && (
         <IntroAnimation onFinish={() => setShowIntro(false)} />
       )}
@@ -40,6 +41,7 @@ export default function App() {
       <Skills />
 
       <Projects />
+
       <Experience />
       <Testimonials />
       <Contact />
