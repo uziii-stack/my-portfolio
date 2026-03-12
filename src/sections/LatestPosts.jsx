@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-const useIsMobile = (query = "(max-width: 639px)") => {
+const useIsMobile = (query = "(max-width: 880px)") => {
     const [isMobile, setIsMobile] = useState(
         typeof window !== "undefined" && window.matchMedia(query).matches
     );
@@ -113,7 +113,7 @@ export default function LatestPosts() {
                 {/* Carousel Left Btn (Hidden on small screens) */}
                 <button
                     onClick={slideLeft}
-                    className="shrink-0 hidden md:flex bg-white/10 backdrop-blur-lg border border-white/20 w-10 h-10 sm:w-14 sm:h-14 rounded-full items-center justify-center hover:scale-110 transition-all text-2xl z-20"
+                    className="shrink-0 hidden min-[881px]:flex bg-white/10 backdrop-blur-lg border border-white/20 w-10 h-10 sm:w-14 sm:h-14 rounded-full items-center justify-center hover:scale-110 transition-all text-2xl z-20"
                 >
                     ‹
                 </button>
@@ -155,7 +155,7 @@ export default function LatestPosts() {
                                     initial={{ opacity: 0, scale: 0.95, y: 30 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: idx * 0.15 }}
-                                    className="min-w-[75vw] max-w-[320px] sm:min-w-[300px] sm:max-w-[360px] md:min-w-[30%] md:max-w-[400px] flex-1 snap-center flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl bg-white/10 border border-white/20 shadow-[0_15px_45px_-12px_rgba(0,0,0,0.6)] transition-all hover:-translate-y-2 hover:bg-white/20"
+                                    className="min-w-[75vw] max-w-[320px] sm:min-w-[300px] sm:max-w-[360px] min-[881px]:min-w-[30%] min-[881px]:max-w-[400px] flex-1 snap-center flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl bg-white/10 border border-white/20 shadow-[0_15px_45px_-12px_rgba(0,0,0,0.6)] transition-all hover:-translate-y-2 hover:bg-white/20"
                                 >
                                     {/* Optional Image Area */}
                                     {postImage ? (
@@ -199,7 +199,7 @@ export default function LatestPosts() {
                 {/* Carousel Right Btn (Hidden on small screens) */}
                 <button
                     onClick={slideRight}
-                    className="shrink-0 hidden md:flex bg-white/10 backdrop-blur-lg border border-white/20 w-10 h-10 sm:w-14 sm:h-14 rounded-full items-center justify-center hover:scale-110 transition-all text-2xl z-20"
+                    className="shrink-0 hidden min-[881px]:flex bg-white/10 backdrop-blur-lg border border-white/20 w-10 h-10 sm:w-14 sm:h-14 rounded-full items-center justify-center hover:scale-110 transition-all text-2xl z-20"
                 >
                     ›
                 </button>
