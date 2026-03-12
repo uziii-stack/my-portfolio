@@ -25,10 +25,8 @@ export default function LatestPosts() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // Use proxy in dev to avoid CORS, absolute URL in prod
-                const apiUrl = import.meta.env.DEV 
-                    ? "/api/posts" 
-                    : "https://my-blog-backend-phi.vercel.app/api/posts";
+                // Fetch directly from the absolute backend URL
+                const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts";
                     
                 const res = await fetch(apiUrl);
                 if (!res.ok) throw new Error("Failed to fetch posts");
@@ -37,8 +35,8 @@ export default function LatestPosts() {
                 // Handle different possible API response structures
                 const postsArray = Array.isArray(data) ? data : (data.posts || data.data || []);
                 
-                // Slice the latest 3 posts
-                setPosts(postsArray.slice(0, 3));
+                // Slice the latest 6 posts
+                setPosts(postsArray.slice(0, 6));
             } catch (err) {
                 console.error("Error fetching posts:", err);
                 setError(true);
@@ -61,6 +59,27 @@ export default function LatestPosts() {
             scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
         }
     };
+
+    // Auto-scroll effect for mobile viewing
+    useEffect(() => {
+        let interval;
+        if (isMobile && posts.length > 0) {
+            interval = setInterval(() => {
+                if (scrollRef.current) {
+                    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+                    // Check if reached the end (with a small buffer)
+                    if (Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 10) {
+                        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        // Slide right by one card's width + gap (gap-4 is 16px)
+                        const shift = scrollRef.current.children[0]?.clientWidth || 300;
+                        scrollRef.current.scrollBy({ left: shift + 16, behavior: 'smooth' });
+                    }
+                }
+            }, 3000); // 3 seconds per slide
+        }
+        return () => clearInterval(interval);
+    }, [isMobile, posts]);
 
     return (
         <section
@@ -89,7 +108,7 @@ export default function LatestPosts() {
                 Latest Blog Posts
             </h2>
 
-            <div className="relative z-10 w-[90%] max-w-6xl flex items-center justify-center gap-4 sm:gap-6">
+            <div className="relative z-10 w-full max-w-7xl flex items-center justify-center gap-2 sm:gap-6 px-0 sm:px-6 md:px-8">
                 
                 {/* Carousel Left Btn (Hidden on small screens) */}
                 <button
@@ -102,8 +121,8 @@ export default function LatestPosts() {
                 {/* Cards Container */}
                 <div 
                     ref={scrollRef}
-                    className="flex overflow-x-auto gap-6 sm:gap-8 snap-x snap-mandatory scrollbar-hide py-4 px-2 w-full"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    className="flex overflow-x-auto gap-4 sm:gap-8 snap-x snap-mandatory scrollbar-hide py-8 px-4 w-full"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', scrollBehavior: 'smooth' }}
                 >
                     {loading ? (
                         <div className="w-full text-center py-20 text-white/60 text-lg flex flex-col items-center gap-4 cursor-default">
@@ -136,7 +155,7 @@ export default function LatestPosts() {
                                     initial={{ opacity: 0, scale: 0.95, y: 30 }}
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: idx * 0.15 }}
-                                    className="min-w-[85vw] sm:min-w-[45vw] md:min-w-[30%] flex-1 snap-center flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl bg-white/10 border border-white/20 shadow-[0_15px_45px_-12px_rgba(0,0,0,0.6)] transition-all hover:-translate-y-2 hover:bg-white-[0.12]"
+                                    className="min-w-[75vw] max-w-[320px] sm:min-w-[300px] sm:max-w-[360px] md:min-w-[30%] md:max-w-[400px] flex-1 snap-center flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl bg-white/10 border border-white/20 shadow-[0_15px_45px_-12px_rgba(0,0,0,0.6)] transition-all hover:-translate-y-2 hover:bg-white/20"
                                 >
                                     {/* Optional Image Area */}
                                     {postImage ? (
