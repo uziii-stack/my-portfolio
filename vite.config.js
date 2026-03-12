@@ -20,5 +20,14 @@ export default ({ mode }) => {
   return defineConfig({
     base,
     plugins: [tailwindcss(), react()],
+    server: {
+      proxy: {
+        "/api": {
+          target: "https://my-blog-backend-phi.vercel.app",
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+    },
   });
 };

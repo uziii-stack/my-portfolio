@@ -7,6 +7,7 @@ import Home from "./sections/Home";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
 import Projects from "./sections/Projects"; // Existing Projects import
+import LatestPosts from "./sections/LatestPosts";
 
 import Experience from "./sections/Experience";
 import Testimonials from "./sections/Testimonials";
@@ -41,6 +42,7 @@ export default function App() {
       <Skills />
 
       <Projects />
+      <LatestPosts />
 
       <Experience />
       <Testimonials />
