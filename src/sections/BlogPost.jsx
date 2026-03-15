@@ -120,7 +120,9 @@ export default function BlogPost() {
             {post.author && (
               <div className="flex items-center gap-2">
                 <User size={16} className="text-emerald-500" />
-                <span className="font-medium">{post.author}</span>
+                <span className="font-medium">
+                  {typeof post.author === 'object' ? post.author.name : post.author}
+                </span>
               </div>
             )}
             <div className="flex items-center gap-2">
