@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, User, Tag } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -72,6 +73,26 @@ export default function BlogPost() {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-black text-white selection:bg-emerald-500 selection:text-black"
     >
+      <Helmet>
+        <title>{post.ogTitle || post.title || "Blog Post"} | Uzair Baig</title>
+        <meta name="description" content={post.ogDescription || post.excerpt || (post.content ? post.content.substring(0, 160).replace(/<[^>]*>?/gm, '') : "")} />
+        <link rel="canonical" href={`https://uzairbaig.netlify.app/blog/${slug}`} />
+        
+        {/* OpenGraph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://uzairbaig.netlify.app/blog/${slug}`} />
+        <meta property="og:title" content={post.ogTitle || post.title} />
+        <meta property="og:description" content={post.ogDescription || post.excerpt} />
+        <meta property="og:image" content={post.ogImage || post.image || post.coverImage} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content={post.twitterCardType || "summary_large_image"} />
+        <meta name="twitter:url" content={`https://uzairbaig.netlify.app/blog/${slug}`} />
+        <meta name="twitter:title" content={post.ogTitle || post.title} />
+        <meta name="twitter:description" content={post.ogDescription || post.excerpt} />
+        <meta name="twitter:image" content={post.ogImage || post.image || post.coverImage} />
+      </Helmet>
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-xl border-b border-white/10 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center">

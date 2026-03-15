@@ -18,6 +18,8 @@ import Footer from "./sections/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 
+import { HelmetProvider } from "react-helmet-async";
+
 const MainContent = () => (
   <>
     <Home />
@@ -36,28 +38,30 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   return (
-    <div className="relative bg-black text-white overflow-x-hidden">
-      {/* GLOBAL TOASTER */}
-      <Toaster position="top-right" />
+    <HelmetProvider>
+      <div className="relative bg-black text-white overflow-x-hidden">
+        {/* GLOBAL TOASTER */}
+        <Toaster position="top-right" />
 
-      {/*  INTRO ANIMATION (Auto hides after greetings) */}
-      {showIntro && (
-        <IntroAnimation onFinish={() => setShowIntro(false)} />
-      )}
+        {/*  INTRO ANIMATION (Auto hides after greetings) */}
+        {showIntro && (
+          <IntroAnimation onFinish={() => setShowIntro(false)} />
+        )}
 
-      {/* Custom Cursor */}
-      <CustomCursor />
+        {/* Custom Cursor */}
+        <CustomCursor />
 
-      {/* Navbar - Pass a prop or handle conditionally if needed, 
-          but usually it should stay fixed */}
-      <Navbar />
+        {/* Navbar - Pass a prop or handle conditionally if needed, 
+            but usually it should stay fixed */}
+        <Navbar />
 
-      <Routes>
-        <Route path="/" element={<MainContent />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<MainContent />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+        </Routes>
 
-      <ScrollToTop />
-    </div>
+        <ScrollToTop />
+      </div>
+    </HelmetProvider>
   );
 }
