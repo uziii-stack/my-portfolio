@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const useIsMobile = (query = "(max-width: 880px)") => {
@@ -144,10 +145,10 @@ export default function LatestPosts() {
                             const postExcerpt = post.excerpt || 
                                               (post.content ? post.content.substring(0, 120) + "..." : "Read more about this topic in the full post.");
                             const postImage = post.image || post.coverImage || post.thumbnail || null;
-                            // Use the live blog URL structure
-                            const postLink = post._id 
-                                ? `https://uziii-stack.github.io/my-blog-frontend/blog/post.html?id=${post._id}` 
-                                : "https://uziii-stack.github.io/my-blog-frontend/blog/posts.html";
+                            // Use internal SPA slug route
+                            const postLink = post.slug 
+                                ? `/blog/${post.slug}` 
+                                : "#";
 
                             return (
                                 <motion.div
@@ -181,14 +182,14 @@ export default function LatestPosts() {
                                         <p className="text-white/60 text-sm sm:text-base mb-6 line-clamp-3 leading-relaxed flex-grow">
                                             {postExcerpt}
                                         </p>
-                                        <a 
-                                            href={postLink}
+                                        <Link 
+                                            to={postLink}
                                             className="mt-auto self-start text-sm sm:text-base font-semibold text-white/90 group flex items-center gap-2 hover:text-white transition-colors"
                                         >
                                             <span className="bg-white/10 px-4 py-2 rounded-full border border-white/10 group-hover:bg-white/20 group-hover:border-white/30 transition-all">
                                                 Read More
                                             </span>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </motion.div>
                             );

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import IntroAnimation from "./components/IntroAnimation";
 import CustomCursor from "./components/CustomCursor";
@@ -6,8 +7,9 @@ import Navbar from "./components/Navbar";
 import Home from "./sections/Home";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
-import Projects from "./sections/Projects"; // Existing Projects import
+import Projects from "./sections/Projects"; 
 import LatestPosts from "./sections/LatestPosts";
+import BlogPost from "./sections/BlogPost";
 
 import Experience from "./sections/Experience";
 import Testimonials from "./sections/Testimonials";
@@ -16,12 +18,25 @@ import Footer from "./sections/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 
+const MainContent = () => (
+  <>
+    <Home />
+    <About />
+    <Skills />
+    <Projects />
+    <LatestPosts />
+    <Experience />
+    <Testimonials />
+    <Contact />
+    <Footer />
+  </>
+);
+
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   return (
     <div className="relative bg-black text-white overflow-x-hidden">
-
       {/* GLOBAL TOASTER */}
       <Toaster position="top-right" />
 
@@ -33,24 +48,16 @@ export default function App() {
       {/* Custom Cursor */}
       <CustomCursor />
 
-      {/* Navbar */}
+      {/* Navbar - Pass a prop or handle conditionally if needed, 
+          but usually it should stay fixed */}
       <Navbar />
 
-      {/* Sections */}
-      <Home />
-      <About />
-      <Skills />
+      <Routes>
+        <Route path="/" element={<MainContent />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+      </Routes>
 
-      <Projects />
-      <LatestPosts />
-
-      <Experience />
-      <Testimonials />
-      <Contact />
       <ScrollToTop />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
