@@ -24,7 +24,11 @@ export default function BlogPost() {
         }
         
         const data = await res.json();
-        setPost(data);
+        if (data.success && data.post) {
+          setPost(data.post);
+        } else {
+          setPost(data); // Fallback for old API if success field is missing
+        }
       } catch (err) {
         console.error("Error fetching post:", err);
         setError(err.message);
