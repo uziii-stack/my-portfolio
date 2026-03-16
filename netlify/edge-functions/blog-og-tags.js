@@ -1,9 +1,19 @@
 export default async (request, context) => {
   const url = new URL(request.url);
+  const userAgent = request.headers.get("user-agent") || "";
   const slug = url.pathname.split("/").pop();
 
   if (!slug || url.pathname === "/blog" || url.pathname === "/blog/") {
-    return;
+    return context.next();
+  }
+
+  // Detect social media bots and search engine crawlers
+  const botRegex = /bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|slackbot|discordbot/i;
+  const isBot = botRegex.test(userAgent);
+
+  // If it's a real user, pass them through to the SPA
+  if (!isBot) {
+    return context.next();
   }
 
   try {
@@ -11,14 +21,14 @@ export default async (request, context) => {
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
-      return;
+      return context.next();
     }
 
     const data = await response.json();
     const post = data.post || data;
 
     if (!post) {
-      return;
+      return context.next();
     }
 
     const title = post.ogTitle || post.title || "Blog Post";
@@ -49,15 +59,10 @@ export default async (request, context) => {
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${image}">
-
-  <script>
-    // Redirect to the SPA root as requested
-    window.location.href = "/";
-  </script>
 </head>
 <body>
   <h1>${title}</h1>
-  <p>Redirecting to the post...</p>
+  <p>${description}</p>
 </body>
 </html>
     `;
@@ -67,9 +72,10 @@ export default async (request, context) => {
     });
   } catch (error) {
     console.error("Edge Function Error:", error);
-    return;
+    return context.next();
   }
 };
+
 
 export const config = {
   path: "/blog/*",
