@@ -1,0 +1,3 @@
+[[edge_functions]]
+  function = "blog-og-tags"
+  path = "/blog/*"
