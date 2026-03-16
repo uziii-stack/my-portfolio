@@ -97,17 +97,17 @@ export default function BlogPost() {
         <meta name="twitter:image" content={post.ogImage || post.image || post.coverImage} />
       </Helmet>
 
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-xl border-b border-white/10 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center">
-          <Link to="/" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group">
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+      <article className="pt-24 pb-20 px-6 max-w-4xl mx-auto">
+        {/* Navigation Button */}
+        <div className="mb-10">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all group backdrop-blur-sm"
+          >
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Portfolio</span>
           </Link>
         </div>
-      </nav>
-
-      <article className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
         {/* Header Section */}
         <header className="mb-12">
           {post.category && (
