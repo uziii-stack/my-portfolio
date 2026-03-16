@@ -5,6 +5,8 @@ import { ArrowLeft, Clock, User, Tag, Link as LinkIcon, Check } from "lucide-rea
 import { Helmet } from "react-helmet-async";
 import { FaLinkedin, FaTwitter, FaXTwitter } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -204,10 +206,11 @@ export default function BlogPost() {
 
         {/* Content Section */}
         <div className="prose prose-invert prose-emerald max-w-none">
-          <div 
-            className="text-lg leading-relaxed text-white/80 space-y-6 blog-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="text-lg leading-relaxed text-white/80 blog-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {post.content}
+            </ReactMarkdown>
+          </div>
         </div>
 
         {/* Footer Navigation */}
@@ -224,16 +227,18 @@ export default function BlogPost() {
       </article>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .blog-content h2 { font-size: 2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #10b981; }
-        .blog-content h3 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: #34d399; }
-        .blog-content p { margin-bottom: 1.5rem; line-height: 1.8; }
-        .blog-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
-        .blog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
-        .blog-content li { margin-bottom: 0.5rem; }
-        .blog-content blockquote { border-left: 4px solid #10b981; padding-left: 1.5rem; font-style: italic; color: #d1d5db; margin: 2rem 0; }
-        .blog-content img { border-radius: 1rem; margin: 2.5rem 0; border: 1px solid rgba(255,255,255,0.1); }
-        .blog-content a { color: #10b981; text-decoration: underline; transition: color 0.2s; }
-        .blog-content a:hover { color: #34d399; }
+        .blog-content h2 { font-size: 2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1.25rem; color: #10b981; }
+        .blog-content h3 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; color: #34d399; }
+        .blog-content p { margin-bottom: 1.75rem; line-height: 1.9; color: rgba(255, 255, 255, 0.85); white-space: pre-line; }
+        .blog-content ul { list-style-type: none; padding-left: 0; margin-bottom: 2rem; }
+        .blog-content li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: rgba(255, 255, 255, 0.8); }
+        .blog-content li::before { content: "•"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
+        .blog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8); }
+        .blog-content blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; font-style: italic; color: #d1d5db; background: rgba(16, 185, 129, 0.05); border-radius: 0 0.5rem 0.5rem 0; margin: 2.5rem 0; }
+        .blog-content img { border-radius: 1.5rem; margin: 3rem 0; border: 1px solid rgba(255,255,255,0.1); width: 100%; height: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .blog-content a { color: #10b981; text-decoration: underline; text-underline-offset: 4px; transition: all 0.2s; }
+        .blog-content a:hover { color: #34d399; opacity: 0.8; }
+        .blog-content code { background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; }
       `}} />
     </motion.div>
   );
