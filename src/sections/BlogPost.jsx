@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, User, Tag } from "lucide-react";
+import { ArrowLeft, Clock, User, Tag, Link as LinkIcon, Check } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import { FaLinkedin, FaTwitter, FaXTwitter } from "react-icons/fa6";
+import { toast } from "react-hot-toast";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -143,6 +145,49 @@ export default function BlogPost() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Social Sharing Section */}
+          <div className="flex items-center gap-4 mt-8">
+            <span className="text-white/70 font-medium text-lg">Share:</span>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+                  window.open(url, '_blank', 'noreferrer');
+                }}
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-[#0077b5] hover:text-white hover:scale-110 transition-all duration-300"
+                title="Share on LinkedIn"
+              >
+                <FaLinkedin size={20} />
+              </button>
+              <button
+                onClick={() => {
+                  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
+                  window.open(url, '_blank', 'noreferrer');
+                }}
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-black hover:text-white hover:scale-110 transition-all duration-300"
+                title="Share on X (Twitter)"
+              >
+                <FaXTwitter size={20} />
+              </button>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied to clipboard!", {
+                    style: {
+                      background: '#10b981',
+                      color: '#fff',
+                      borderRadius: '10px',
+                    }
+                  });
+                }}
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-emerald-500 hover:text-white hover:scale-110 transition-all duration-300"
+                title="Copy Link"
+              >
+                <LinkIcon size={20} />
+              </button>
+            </div>
           </div>
         </header>
 
