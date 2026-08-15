@@ -18,24 +18,25 @@ const useIsMobile = (query = "(max-width: 639px)") => {
 
 const experiences = [
     {
-        role: "Web Developer",
-        company: "Brain Mentors",
-        duration: "2022",
+        role: "Software Engineer / PHP Developer",
+        company: "Badar Expo Solutions",
+        duration: "May 2026 – Present",
         description:
-            "Built high-performance apps, integrated AI features, improved engagement by 10%.",
+            "Building and maintaining production ERP and internal business systems using Laravel/PHP, REST APIs, Docker, and cloud infrastructure. Working on backend architecture, integrations, automation, and production reliability.",
     },
     {
-        role: "Web Developer Intern",
-        company: "Mobisoft Technologies",
-        duration: "2022 - 2023",
-        description: "Gained hands-on web development experience.",
+        role: "Freelance Full-Stack Developer",
+        company: "Independent",
+        duration: "Ongoing",
+        description:
+            "Delivered custom web applications, dashboards, business tools, and automation solutions for clients, working across frontend, backend APIs, databases, third-party integrations, and deployment.",
     },
     {
-        role: "Graduate Engineer",
-        company: "HCL Technologies",
-        duration: "2024 - 2025",
+        role: "Software Engineering & System Development",
+        company: "Independent Projects",
+        duration: "Ongoing",
         description:
-            "Built frontend of GenAI-powered PV Intake App with Next.js & TS for US client.",
+            "Designing and developing modern applications using React, Laravel, Node.js, PostgreSQL/MySQL, Docker, and modern deployment workflows, with a focus on clean architecture, performance, scalability, and maintainability.",
     },
 ];
 

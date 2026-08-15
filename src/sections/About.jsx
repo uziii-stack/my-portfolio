@@ -98,12 +98,11 @@ export default function About() {
         <h2 className="text-2xl md:text-3xl font-bold mb-4">About Me</h2>
 
         <p className="text-gray-400 text-sm md:text-lg leading-relaxed">
-          I'm a Software Developer passionate about building fast, resilient
-          applications.
+          I'm a Software Engineer passionate about building scalable, resilient, and production-ready systems.
         </p>
 
         <p className="text-gray-400 text-sm md:text-lg leading-relaxed mt-4">
-          I build scalable, modern applications with a strong focus on clean architecture, delightful UX, and performance. My toolkit spans Java, React, Next.js, TypeScript, Tailwind CSS, and Restful API—bringing ideas to life from concept to production with robust APIs and smooth interfaces.
+          I design and develop modern applications with a strong focus on clean architecture, backend engineering, distributed systems, and performance. My toolkit spans PHP, Laravel, React, Node.js, REST APIs, PostgreSQL/MySQL, Docker, Linux, Nginx, and CI/CD, taking ideas from architecture and development to reliable production deployments.
         </p>
       </div>
     </section>

@@ -24,13 +24,11 @@ const glowVariants = {
 export default function Home() {
   const roles = useMemo(
     () => [
-      "Frontend Engineer",
-      "Full-Stack Ready",
-      "React.js Expert",
-      "Next.js Developer",
-      "UI/UX Enthusiast",
-      "Software Architect",
-      "Database Schema",
+      "Software Engineer",
+      "Backend Engineer",
+      "Software Architecture & Distributed Systems",
+      "Cloud & DevOps",
+      "Full-Stack Development",
     ],
     []
   );
@@ -142,9 +140,9 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
             >
-              I build fast, responsive, and modern web applications using{" "}
-              <strong>React.js, Next.js, JS, WordPress</strong>. I focus on clean UI,
-              smooth animations, and scalable code.
+              I build scalable, high-performance, and resilient systems using{" "}
+              <strong>PHP, Laravel, React, and Node.js</strong>. I focus on clean
+              architecture, robust backend APIs, and production-ready deployments.
             </motion.p>
 
             {/* Buttons */}
@@ -201,6 +199,7 @@ export default function Home() {
         </div>
 
         {/* Right Side Avatar */}
+        {/*
         <div className="relative hidden lg:block">
           <div
             className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
@@ -230,6 +229,7 @@ export default function Home() {
             transition={{ delay: 0.2, duration: 0.8 }}
           />
         </div>
+        */}
       </div>
     </section>
   );
