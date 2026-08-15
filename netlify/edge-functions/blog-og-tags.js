@@ -1,8 +1,9 @@
 /**
  * Netlify Edge Function: blog-og-tags
- * Intercepts /blog/* requests to serve complete, dynamic, valid SEO metadata and
- * full article semantic HTML to search engine crawlers and social media bots,
- * while passing normal human visitors through to the React CSR SPA.
+ * Intercepts /blog/* requests for ALL visitors and crawlers to inject complete, dynamic,
+ * valid SEO metadata, canonical URLs, BlogPosting JSON-LD, and full semantic article content
+ * directly into the production HTML response before JavaScript execution, while preserving
+ * full React CSR execution and interactivity in the browser.
  */
 
 // Helper: Escape HTML entities to prevent attribute breakout and XSS
@@ -130,7 +131,7 @@ function renderMarkdownToHtml(markdown) {
   return htmlBlocks.join("\n");
 }
 
-// Helper: Generate a real HTTP 404 response for invalid slugs
+// Helper: Generate a genuine HTTP 404 response for invalid slugs
 function generate404Html(slug) {
   const safeSlug = escapeHtml(slug);
   return `<!DOCTYPE html>
@@ -153,13 +154,12 @@ function generate404Html(slug) {
 
 export default async (request, context) => {
   const url = new URL(request.url);
-  const userAgent = request.headers.get("user-agent") || "";
 
   // 1. Normalize pathname and extract slug safely (handling trailing slashes)
   const cleanPath = url.pathname.replace(/\/+$/, "");
   const parts = cleanPath.split("/").filter(Boolean);
 
-  // If path is /blog or has no slug, pass through to SPA
+  // If path is /blog or has no slug, pass through to normal SPA
   if (parts.length < 2 || parts[0] !== "blog") {
     return context.next();
   }
@@ -169,35 +169,26 @@ export default async (request, context) => {
     return context.next();
   }
 
-  // 2. Detect bots, search engines, and social media crawlers
-  const botRegex = /bot|crawler|spider|crawling|facebookexternalhit|twitterbot|linkedinbot|whatsapp|slackbot|discordbot|applebot|bingbot|yandex|duckduckbot|baiduspider/i;
-  const isBot = botRegex.test(userAgent);
-
-  // If it's a real human user, pass through to the React SPA
-  if (!isBot) {
-    return context.next();
-  }
-
-  // 3. Fetch blog post data from the backend API
+  // 2. Fetch blog post data from the backend API
   try {
     const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${encodeURIComponent(slug)}`;
-    const response = await fetch(apiUrl);
+    const apiResponse = await fetch(apiUrl);
 
-    if (response.status === 404) {
+    if (apiResponse.status === 404) {
       return new Response(generate404Html(slug), {
         status: 404,
         headers: { "content-type": "text/html; charset=UTF-8" },
       });
     }
 
-    if (!response.ok) {
+    if (!apiResponse.ok) {
       return new Response(generate404Html(slug), {
-        status: response.status >= 400 && response.status < 500 ? 404 : 502,
+        status: apiResponse.status >= 400 && apiResponse.status < 500 ? 404 : 502,
         headers: { "content-type": "text/html; charset=UTF-8" },
       });
     }
 
-    const data = await response.json();
+    const data = await apiResponse.json();
     const post = (data && data.success && data.post) ? data.post : (data && data.post ? data.post : data);
 
     if (!post || (!post._id && !post.title && !post.slug)) {
@@ -207,14 +198,18 @@ export default async (request, context) => {
       });
     }
 
-    // 4. Extract and prepare metadata
+    // 3. Get the base SPA HTML response from Netlify (contains compiled scripts & styles)
+    const spaResponse = await context.next();
+    const originalHtml = await spaResponse.text();
+
+    // 4. Extract and prepare dynamic metadata
     const title = post.ogTitle || post.title || "Blog Post";
     let description = post.ogDescription || post.excerpt || "";
     if (!description && post.content) {
       description = post.content.substring(0, 160).replace(/[#*`_\[\]]/g, "").trim();
     }
 
-    const image = post.ogImage || post.coverImage || post.image || "";
+    const image = post.ogImage || post.coverImage || post.image || "https://uzairbaig.netlify.app/og-image.png";
     const canonicalUrl = `https://uzairbaig.netlify.app/blog/${slug}`;
 
     const authorName = post.author && typeof post.author === "object"
@@ -251,13 +246,7 @@ export default async (request, context) => {
       },
     };
 
-    // 7. Construct complete, valid, semantic HTML document
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+    const dynamicHeadTags = `
   <title>${escapeHtml(title)} | Uzair Baig</title>
   <meta name="description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
@@ -267,21 +256,41 @@ export default async (request, context) => {
   <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
-  ${image ? `<meta property="og:image" content="${escapeHtml(image)}">` : ""}
+  <meta property="og:image" content="${escapeHtml(image)}">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="${escapeHtml(canonicalUrl)}">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
-  ${image ? `<meta name="twitter:image" content="${escapeHtml(image)}">` : ""}
+  <meta name="twitter:image" content="${escapeHtml(image)}">
 
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">
 ${JSON.stringify(schemaData, null, 2).replace(/</g, "\\u003c")}
-  </script>
-</head>
-<body>
+  </script>`;
+
+    // 7. Replace static default tags with dynamic blog tags in the HTML
+    let modifiedHtml = originalHtml;
+
+    modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/is, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']description["'][^>]*>/is, "");
+    modifiedHtml = modifiedHtml.replace(/<link\s+rel=["']canonical["'][^>]*>/is, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:title["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:description["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:url["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:type["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:image["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:card["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:title["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:description["'][^>]*>/gis, "");
+    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:image["'][^>]*>/gis, "");
+
+    // Inject dynamic head tags before </head>
+    modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
+
+    // 8. Inject full semantic article HTML inside <div id="root">...</div> for View Page Source and Crawlers
+    const articleHtml = `
   <main>
     <article>
       <header>
@@ -297,15 +306,18 @@ ${JSON.stringify(schemaData, null, 2).replace(/</g, "\\u003c")}
 ${renderedContent}
       </div>
     </article>
-  </main>
-</body>
-</html>`;
+  </main>`;
 
-    return new Response(html, {
+    modifiedHtml = modifiedHtml.replace(
+      '<div id="root"></div>',
+      `<div id="root">${articleHtml}</div>`
+    );
+
+    return new Response(modifiedHtml, {
       status: 200,
       headers: {
         "content-type": "text/html; charset=UTF-8",
-        "cache-control": "public, max-age=300, s-maxage=600",
+        "cache-control": "public, max-age=0, must-revalidate",
       },
     });
   } catch (error) {
