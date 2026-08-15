@@ -1,3 +1,7 @@
 [[edge_functions]]
   function = "blog-og-tags"
   path = "/blog/*"
+
+[[edge_functions]]
+  function = "sitemap"
+  path = "/sitemap.xml"
