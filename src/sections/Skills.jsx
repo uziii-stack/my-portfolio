@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { FaJava, FaReact } from "react-icons/fa";
 import {
     SiNextdotjs, SiTypescript, SiTailwindcss, SiFastapi,
-    SiPython, SiDocker, SiMongodb, SiAngular
+    SiPython, SiDocker, SiMongodb, SiAngular, SiLaravel, SiPhp
 } from "react-icons/si";
 import { DiNodejsSmall } from "react-icons/di";
 import { GrDatabase } from "react-icons/gr";   // ✅ NEW IMPORT
@@ -18,6 +18,8 @@ export default function Skills() {
         { icon: <SiTailwindcss />, name: "Tailwind CSS" },
         { icon: <SiFastapi />, name: "FastAPI" },
         { icon: <SiPython />, name: "Python" },
+        { icon: <SiLaravel />, name: "Laravel" },
+        { icon: <SiPhp />, name: "PHP" },
         { icon: <SiDocker />, name: "Docker" },
         { icon: <DiNodejsSmall />, name: "Node.js" },
         { icon: <SiMongodb />, name: "MongoDB" },
