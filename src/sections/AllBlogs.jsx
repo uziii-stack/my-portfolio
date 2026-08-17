@@ -30,6 +30,13 @@ function getCategoryColor(index) {
   return badgeStyles[index % badgeStyles.length];
 }
 
+function formatCategory(category) {
+  if (!category) return "Article";
+  // Get the primary category segment
+  const primary = category.split(/[/,]/)[0].trim();
+  return primary || "Article";
+}
+
 export default function AllBlogs() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +72,7 @@ export default function AllBlogs() {
     const cats = new Set(["All"]);
     posts.forEach((p) => {
       if (p.category) {
-        p.category.split(",").forEach((c) => {
+        p.category.split(/[/,]/).forEach((c) => {
           const trimmed = c.trim();
           if (trimmed) cats.add(trimmed);
         });
@@ -272,7 +279,7 @@ export default function AllBlogs() {
               const postTitle = post.title || "Untitled Post";
               const postImage = post.image || post.coverImage || post.thumbnail || null;
               const postLink = `/blog/${post.slug}`;
-              const postCategory = (post.category || "Article").split(",")[0].trim();
+              const postCategory = formatCategory(post.category);
               const badgeColor = getCategoryColor(idx);
               const isLiked = !!likedPosts[post.slug];
 
@@ -318,9 +325,10 @@ export default function AllBlogs() {
                   {/* Right Side Content */}
                   <div className="flex flex-col justify-center flex-1 min-w-0 pr-1 sm:pr-2">
                     {/* Category / Status Pill Badge */}
-                    <div className="mb-2">
+                    <div className="mb-2 flex items-center">
                       <span
-                        className={`inline-block px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold tracking-wide shadow-sm ${badgeColor}`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold tracking-wide shadow-sm max-w-[160px] sm:max-w-xs truncate whitespace-nowrap leading-tight ${badgeColor}`}
+                        title={post.category || "Article"}
                       >
                         {postCategory}
                       </span>
