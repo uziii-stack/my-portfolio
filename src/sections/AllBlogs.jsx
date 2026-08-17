@@ -243,9 +243,29 @@ export default function AllBlogs() {
 
         {/* Content States */}
         {loading ? (
-          <div className="w-full text-center py-28 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 rounded-full border-3 border-white/20 border-t-emerald-500 animate-spin mb-4" />
-            <p className="text-white/60 text-sm animate-pulse">Loading articles...</p>
+          <div className="flex flex-col gap-5 sm:gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 sm:gap-6 p-3 sm:p-4 rounded-3xl bg-white/[0.03] border border-white/5 animate-pulse shadow-lg backdrop-blur-md"
+              >
+                {/* Left Thumbnail Skeleton */}
+                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-2xl bg-white/10" />
+
+                {/* Right Content Skeleton */}
+                <div className="flex flex-col justify-center flex-1 min-w-0 pr-2">
+                  {/* Category Pill Skeleton */}
+                  <div className="w-24 h-5 rounded-full bg-white/10 mb-2.5" />
+
+                  {/* Title Skeleton Lines */}
+                  <div className="w-4/5 h-4 sm:h-5 rounded-lg bg-white/10 mb-2" />
+                  <div className="w-2/3 h-4 sm:h-5 rounded-lg bg-white/10 mb-3" />
+
+                  {/* Read More Link Skeleton */}
+                  <div className="w-20 h-3.5 rounded-md bg-white/5" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="text-center py-16 bg-white/5 border border-white/10 rounded-2xl p-6">
