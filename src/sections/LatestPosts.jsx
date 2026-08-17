@@ -208,14 +208,12 @@ export default function LatestPosts() {
 
             {/* View All Posts Button */}
             <div className="mt-12 sm:mt-16 relative z-20">
-                <a
-                    href="https://uziii-stack.github.io/my-blog-frontend/blog/posts.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <Link
+                    to="/blog"
                     className="px-6 py-3 sm:px-8 sm:py-4 bg-white text-black font-semibold text-base sm:text-lg rounded-full shadow-lg hover:shadow-white/20 hover:scale-105 transition-all inline-block"
                 >
                     View All Posts
-                </a>
+                </Link>
             </div>
 
             {/* Inline styles for hiding the scrollbar while keeping functionality */}

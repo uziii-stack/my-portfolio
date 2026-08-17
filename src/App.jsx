@@ -10,6 +10,7 @@ import Skills from "./sections/Skills";
 import Projects from "./sections/Projects"; 
 import LatestPosts from "./sections/LatestPosts";
 import BlogPost from "./sections/BlogPost";
+import AllBlogs from "./sections/AllBlogs";
 
 import Experience from "./sections/Experience";
 import Testimonials from "./sections/Testimonials";
@@ -57,6 +58,8 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={<MainContent />} />
+          <Route path="/blog" element={<AllBlogs />} />
+          <Route path="/blogs" element={<AllBlogs />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
         </Routes>
 

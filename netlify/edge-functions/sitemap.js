@@ -36,6 +36,12 @@ export default async () => {
     <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://uzairbaig.netlify.app/blog</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>\n`;
 
     for (const post of posts) {
