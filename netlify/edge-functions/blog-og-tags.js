@@ -1,9 +1,9 @@
 /**
  * Netlify Edge Function: blog-og-tags
- * Intercepts /blog/* requests for ALL visitors and crawlers to inject complete, dynamic,
- * valid SEO metadata, canonical URLs, BlogPosting JSON-LD, and full semantic article content
- * directly into the production HTML response before JavaScript execution, while preserving
- * full React CSR execution and interactivity in the browser.
+ * Intercepts /blog and /blog/* requests for ALL visitors and crawlers to inject complete, dynamic,
+ * valid SEO metadata, canonical URLs, JSON-LD structured data, and full semantic HTML directly into
+ * the production HTML response before JavaScript execution, while preserving full React CSR execution
+ * and interactivity in the browser.
  */
 
 // Helper: Escape HTML entities to prevent attribute breakout and XSS
@@ -131,6 +131,26 @@ function renderMarkdownToHtml(markdown) {
   return htmlBlocks.join("\n");
 }
 
+// Helper: Strip static index.html head tags and static Person JSON-LD
+function stripStaticHeadTags(html) {
+  let cleaned = html;
+  cleaned = cleaned.replace(/<title>.*?<\/title>/is, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']description["'][^>]*>/is, "");
+  cleaned = cleaned.replace(/<link\s+rel=["']canonical["'][^>]*>/is, "");
+  cleaned = cleaned.replace(/<meta\s+property=["']og:title["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+property=["']og:description["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+property=["']og:url["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+property=["']og:type["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+property=["']og:image["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']twitter:card["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']twitter:url["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']twitter:title["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']twitter:description["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<meta\s+name=["']twitter:image["'][^>]*>/gis, "");
+  cleaned = cleaned.replace(/<script\s+type=["']application\/ld\+json["']>.*?<\/script>/gis, "");
+  return cleaned;
+}
+
 // Helper: Generate a genuine HTTP 404 response for invalid slugs
 function generate404Html(slug) {
   const safeSlug = escapeHtml(slug);
@@ -159,17 +179,157 @@ export default async (request, context) => {
   const cleanPath = url.pathname.replace(/\/+$/, "");
   const parts = cleanPath.split("/").filter(Boolean);
 
-  // If path is /blog or has no slug, pass through to normal SPA
-  if (parts.length < 2 || parts[0] !== "blog") {
+  // If path does not start with blog, pass through to normal SPA
+  if (parts.length === 0 || parts[0] !== "blog") {
     return context.next();
   }
 
-  const slug = decodeURIComponent(parts[1]).trim();
+  const slug = parts.length >= 2 ? decodeURIComponent(parts[1]).trim() : "";
+
+  // ==========================================
+  // CASE 1: Blog Listing Page (/blog)
+  // ==========================================
   if (!slug) {
-    return context.next();
+    try {
+      // Fetch all posts from the backend API
+      let posts = [];
+      try {
+        const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts";
+        const apiResponse = await fetch(apiUrl);
+        if (apiResponse.ok) {
+          const data = await apiResponse.json();
+          posts = Array.isArray(data) ? data : (data.posts || data.data || []);
+        }
+      } catch (fetchErr) {
+        console.error("Error fetching blog posts for listing SSR:", fetchErr);
+      }
+
+      // Get the base SPA HTML response from Netlify
+      const spaResponse = await context.next();
+      const originalHtml = await spaResponse.text();
+
+      const title = "Blog & Technical Articles | Uzair Baig";
+      const description = "Explore technical articles on software engineering, backend architecture, system design, web performance, and modern development by Uzair Baig.";
+      const canonicalUrl = "https://uzairbaig.netlify.app/blog";
+      const ogImage = "https://uzairbaig.netlify.app/og-image.png";
+
+      // Generate CollectionPage + ItemList Structured Data (JSON-LD)
+      const validPosts = Array.isArray(posts) ? posts.filter((p) => p && p.slug) : [];
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": title,
+        "url": canonicalUrl,
+        "description": description,
+        "publisher": {
+          "@type": "Person",
+          "name": "Uzair Baig",
+          "url": "https://uzairbaig.netlify.app",
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": validPosts.length,
+          "itemListElement": validPosts.map((post, idx) => ({
+            "@type": "ListItem",
+            "position": idx + 1,
+            "url": `https://uzairbaig.netlify.app/blog/${post.slug}`,
+            "name": post.title || "Untitled Post",
+          })),
+        },
+      };
+
+      const dynamicHeadTags = `
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:image" content="${escapeHtml(ogImage)}">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${escapeHtml(canonicalUrl)}">
+  <meta name="twitter:title" content="${escapeHtml(title)}">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${escapeHtml(ogImage)}">
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+${JSON.stringify(schemaData, null, 2).replace(/</g, "\\u003c")}
+  </script>`;
+
+      // Render server HTML for blog listing
+      const postsHtml = validPosts.map((post) => {
+        const postTitle = post.title || "Untitled Post";
+        const postSlug = post.slug || "";
+        const postLink = `/blog/${postSlug}`;
+        const postImage = post.image || post.coverImage || post.thumbnail || post.ogImage || null;
+        const postExcerpt = post.excerpt || (post.content ? post.content.substring(0, 160).replace(/[#*`_\[\]]/g, "").trim() : "");
+        const dateVal = post.publishedAt || post.createdAt || post.date;
+        let formattedDate = "";
+        if (dateVal) {
+          try {
+            formattedDate = new Date(dateVal).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+          } catch (_) {}
+        }
+
+        return `
+      <li>
+        <article>
+          <header>
+            <h2><a href="${postLink}">${escapeHtml(postTitle)}</a></h2>
+            ${post.category ? `<span>${escapeHtml(post.category)}</span>` : ""}
+            ${dateVal ? `<time datetime="${escapeHtml(dateVal)}">${escapeHtml(formattedDate)}</time>` : ""}
+          </header>
+          ${postImage ? `<figure><a href="${postLink}"><img src="${escapeHtml(postImage)}" alt="${escapeHtml(postTitle)}" loading="lazy" /></a></figure>` : ""}
+          ${postExcerpt ? `<p>${escapeHtml(postExcerpt)}</p>` : ""}
+          <footer>
+            <a href="${postLink}">Read more</a>
+          </footer>
+        </article>
+      </li>`;
+      }).join("\n");
+
+      const listingHtml = `
+  <main>
+    <header>
+      <h1>Blog &amp; Technical Articles</h1>
+      <p>${escapeHtml(description)}</p>
+    </header>
+    <section aria-label="Articles">
+      <ul>
+${postsHtml}
+      </ul>
+    </section>
+  </main>`;
+
+      let modifiedHtml = stripStaticHeadTags(originalHtml);
+      modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
+      modifiedHtml = modifiedHtml.replace(
+        /<div id=["']root["']>\s*<\/div>/is,
+        `<div id="root">${listingHtml}</div>`
+      );
+
+      return new Response(modifiedHtml, {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=UTF-8",
+          "cache-control": "public, max-age=0, must-revalidate",
+        },
+      });
+    } catch (error) {
+      console.error("Listing Edge Function Error:", error);
+      return context.next();
+    }
   }
 
-  // 2. Fetch blog post data from the backend API
+  // ==========================================
+  // CASE 2: Individual Blog Post (/blog/{slug}) - PRESERVED EXISTING SSR
+  // ==========================================
   try {
     const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${encodeURIComponent(slug)}`;
     const apiResponse = await fetch(apiUrl);
@@ -198,11 +358,11 @@ export default async (request, context) => {
       });
     }
 
-    // 3. Get the base SPA HTML response from Netlify (contains compiled scripts & styles)
+    // Get the base SPA HTML response from Netlify (contains compiled scripts & styles)
     const spaResponse = await context.next();
     const originalHtml = await spaResponse.text();
 
-    // 4. Extract and prepare dynamic metadata
+    // Extract and prepare dynamic metadata
     const title = post.ogTitle || post.title || "Blog Post";
     let description = post.ogDescription || post.excerpt || "";
     if (!description && post.content) {
@@ -219,10 +379,10 @@ export default async (request, context) => {
     const publishedDate = post.publishedAt || post.createdAt || post.date || new Date().toISOString();
     const modifiedDate = post.updatedAt || publishedDate;
 
-    // 5. Render full article content
+    // Render full article content
     const renderedContent = renderMarkdownToHtml(post.content || description);
 
-    // 6. Generate BlogPosting Structured Data (JSON-LD)
+    // Generate BlogPosting Structured Data (JSON-LD)
     const schemaData = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
@@ -270,32 +430,19 @@ export default async (request, context) => {
 ${JSON.stringify(schemaData, null, 2).replace(/</g, "\\u003c")}
   </script>`;
 
-    // 7. Replace static default tags with dynamic blog tags in the HTML
-    let modifiedHtml = originalHtml;
-
-    modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/is, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']description["'][^>]*>/is, "");
-    modifiedHtml = modifiedHtml.replace(/<link\s+rel=["']canonical["'][^>]*>/is, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:title["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:description["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:url["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:type["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+property=["']og:image["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:card["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:title["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:description["'][^>]*>/gis, "");
-    modifiedHtml = modifiedHtml.replace(/<meta\s+name=["']twitter:image["'][^>]*>/gis, "");
+    // Replace static default tags with dynamic blog tags in the HTML
+    let modifiedHtml = stripStaticHeadTags(originalHtml);
 
     // Inject dynamic head tags before </head>
     modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
 
-    // 8. Inject full semantic article HTML inside <div id="root">...</div> for View Page Source and Crawlers
+    // Inject full semantic article HTML inside <div id="root">...</div>
     const articleHtml = `
   <main>
     <article>
       <header>
         <h1>${escapeHtml(post.title || title)}</h1>
-        ${post.publishedAt ? `<time datetime="${escapeHtml(publishedDate)}">${escapeHtml(new Date(publishedDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}</time>` : ""}
+        ${post.publishedAt || post.createdAt ? `<time datetime="${escapeHtml(publishedDate)}">${escapeHtml(new Date(publishedDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}</time>` : ""}
         ${authorName ? `<address>By ${escapeHtml(authorName)}</address>` : ""}
         ${post.category ? `<p>Category: ${escapeHtml(post.category)}</p>` : ""}
       </header>
@@ -309,7 +456,7 @@ ${renderedContent}
   </main>`;
 
     modifiedHtml = modifiedHtml.replace(
-      '<div id="root"></div>',
+      /<div id=["']root["']>\s*<\/div>/is,
       `<div id="root">${articleHtml}</div>`
     );
 
@@ -330,5 +477,5 @@ ${renderedContent}
 };
 
 export const config = {
-  path: "/blog/*",
+  path: ["/blog", "/blog/*"],
 };
