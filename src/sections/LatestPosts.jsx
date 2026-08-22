@@ -26,8 +26,8 @@ export default function LatestPosts() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // Fetch directly from the absolute backend URL
-                const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts";
+                // Fetch directly from the absolute backend URL (filtered to Uzair's posts)
+                const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts?author=admin";
                     
                 const res = await fetch(apiUrl);
                 if (!res.ok) throw new Error("Failed to fetch posts");

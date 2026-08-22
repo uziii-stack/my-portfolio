@@ -16,7 +16,7 @@ function escapeXml(str) {
 
 export default async () => {
   try {
-    const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts";
+    const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts?author=admin";
     const res = await fetch(apiUrl);
 
     if (!res.ok) {

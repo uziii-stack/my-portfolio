@@ -300,10 +300,10 @@ export default async (request, context) => {
   // ==========================================
   if (!slug) {
     try {
-      // Fetch all posts from the backend API
+      // Fetch all posts from the backend API (filtered to Uzair)
       let posts = [];
       try {
-        const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts";
+        const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts?author=admin";
         const apiResponse = await fetch(apiUrl);
         if (apiResponse.ok) {
           const data = await apiResponse.json();

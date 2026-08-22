@@ -50,7 +50,7 @@ export default function AllBlogs() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://my-blog-backend-phi.vercel.app/api/posts");
+        const res = await fetch("https://my-blog-backend-phi.vercel.app/api/posts?author=admin");
         if (!res.ok) throw new Error("Failed to fetch blog posts");
         const data = await res.json();
         const postsArray = Array.isArray(data) ? data : (data.posts || data.data || []);
