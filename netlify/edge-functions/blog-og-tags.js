@@ -440,7 +440,7 @@ ${postsHtml}
   // CASE 2: Individual Blog Post (/blog/{slug}) - PRESERVED EXISTING SSR
   // ==========================================
   try {
-    const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${encodeURIComponent(slug)}`;
+    const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${encodeURIComponent(slug)}?author=admin`;
     const apiResponse = await fetch(apiUrl);
 
     if (apiResponse.status === 404) {

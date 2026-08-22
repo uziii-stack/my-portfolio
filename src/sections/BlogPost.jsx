@@ -18,7 +18,7 @@ export default function BlogPost() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${slug}`;
+        const apiUrl = `https://my-blog-backend-phi.vercel.app/api/posts/${slug}?author=admin`;
         const res = await fetch(apiUrl);
         
         if (!res.ok) {
