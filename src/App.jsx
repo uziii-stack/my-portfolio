@@ -11,6 +11,7 @@ import Projects from "./sections/Projects";
 import LatestPosts from "./sections/LatestPosts";
 import BlogPost from "./sections/BlogPost";
 import AllBlogs from "./sections/AllBlogs";
+import Sitemap from "./sections/Sitemap";
 
 import Experience from "./sections/Experience";
 import Testimonials from "./sections/Testimonials";
@@ -61,6 +62,8 @@ export default function App() {
           <Route path="/blog" element={<AllBlogs />} />
           <Route path="/blogs" element={<AllBlogs />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/sitemap.html" element={<Sitemap />} />
+          <Route path="/sitemap" element={<Sitemap />} />
         </Routes>
 
         <ScrollToTop />

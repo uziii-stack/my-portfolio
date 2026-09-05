@@ -38,6 +38,12 @@ export default async () => {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://uzairbaig.netlify.app/sitemap.html</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://uzairbaig.netlify.app/blog</loc>
     <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
