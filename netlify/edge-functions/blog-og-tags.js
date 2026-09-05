@@ -418,9 +418,11 @@ ${postsHtml}
 
       let modifiedHtml = stripStaticHeadTags(originalHtml);
       modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
+      // Keep root clean for React CSR to eliminate unstyled text flash / jitter,
+      // and provide semantic fallback in noscript for non-JS crawlers
       modifiedHtml = modifiedHtml.replace(
-        /<div id=["']root["']>\s*<\/div>/is,
-        `<div id="root">${listingHtml}</div>`
+        "</body>",
+        `<noscript>${listingHtml}</noscript>\n</body>`
       );
 
       return new Response(modifiedHtml, {
@@ -539,13 +541,6 @@ ${postsHtml}
 ${JSON.stringify(schemaData, null, 2).replace(/</g, "\\u003c")}
   </script>`;
 
-    // Replace static default tags with dynamic blog tags in the HTML
-    let modifiedHtml = stripStaticHeadTags(originalHtml);
-
-    // Inject dynamic head tags before </head>
-    modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
-
-    // Inject full semantic article HTML inside <div id="root">...</div>
     const articleHtml = `
   <main>
     <article>
@@ -564,9 +559,17 @@ ${renderedContent}
     </article>
   </main>`;
 
+    // Replace static default tags with dynamic blog tags in the HTML
+    let modifiedHtml = stripStaticHeadTags(originalHtml);
+
+    // Inject dynamic head tags before </head>
+    modifiedHtml = modifiedHtml.replace("</head>", `${dynamicHeadTags}\n</head>`);
+
+    // Keep root clean for React CSR to eliminate unstyled text flash / jitter,
+    // and provide semantic fallback in noscript for non-JS crawlers
     modifiedHtml = modifiedHtml.replace(
-      /<div id=["']root["']>\s*<\/div>/is,
-      `<div id="root">${articleHtml}</div>`
+      "</body>",
+      `<noscript>${articleHtml}</noscript>\n</body>`
     );
 
     return new Response(modifiedHtml, {

@@ -15,6 +15,7 @@ import {
   Check,
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import Footer from "./Footer";
 
 // Vibrant category badge colors matching the reference design
 const badgeStyles = [
@@ -468,6 +469,9 @@ export default function AllBlogs() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }

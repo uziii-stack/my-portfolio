@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, User, Tag, Link as LinkIcon, Check } from "lucide-react";
+import { ArrowLeft, Clock, User, Tag, Link as LinkIcon, Check, BookOpen, Share2 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { FaLinkedin, FaTwitter, FaXTwitter } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Footer from "./Footer";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -43,29 +44,43 @@ export default function BlogPost() {
     };
 
     fetchPost();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [slug]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-emerald-500 animate-spin mb-4"></div>
-        <p className="text-white/60 animate-pulse text-lg">Loading post...</p>
+      <div className="min-h-screen bg-black text-white flex flex-col justify-between">
+        <div className="flex-grow flex flex-col items-center justify-center p-4">
+          <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-emerald-500 animate-spin mb-4"></div>
+          <p className="text-white/60 animate-pulse text-lg">Loading post...</p>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4 text-center">
-        <h1 className="text-4xl font-bold mb-4 text-emerald-500">Oops!</h1>
-        <p className="text-white/60 text-xl mb-8">{error || "Post not found"}</p>
-        <Link 
-          to="/" 
-          className="px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
-        >
-          Back to Portfolio
-        </Link>
+      <div className="min-h-screen bg-black text-white flex flex-col justify-between">
+        <div className="flex-grow flex flex-col items-center justify-center p-6 text-center">
+          <h1 className="text-4xl font-bold mb-4 text-emerald-500">Oops!</h1>
+          <p className="text-white/60 text-xl mb-8">{error || "Post not found"}</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link 
+              to="/blog" 
+              className="px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
+            >
+              Browse All Blogs
+            </Link>
+            <Link 
+              to="/" 
+              className="px-8 py-3 bg-white/10 text-white font-bold rounded-full border border-white/20 hover:bg-white/20 transition-all"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -75,7 +90,7 @@ export default function BlogPost() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-black text-white selection:bg-emerald-500 selection:text-black"
+      className="min-h-screen bg-black text-white selection:bg-emerald-500 selection:text-black flex flex-col justify-between"
     >
       <Helmet>
         <title>{post.ogTitle || post.title || "Blog Post"} | Uzair Baig</title>
@@ -97,134 +112,167 @@ export default function BlogPost() {
         <meta name="twitter:image" content={post.ogImage || post.image || post.coverImage} />
       </Helmet>
 
-      <article className="pt-24 pb-20 px-6 max-w-4xl mx-auto">
-        {/* Navigation Button */}
-        <div className="mb-10">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all group backdrop-blur-sm"
-          >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium">Back to Portfolio</span>
-          </Link>
-        </div>
-        {/* Header Section */}
-        <header className="mb-12">
-          {post.category && (
-            <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold mb-6">
-              {post.category}
-            </span>
-          )}
-          
-          <h1 className="text-4xl md:text-6xl font-bold mb-8 leading-tight tracking-tight">
-            {post.title}
-          </h1>
+      <main className="flex-grow">
+        <article className="pt-24 pb-20 px-4 sm:px-6 max-w-4xl mx-auto">
+          {/* Navigation / Breadcrumb Buttons */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+            <div className="flex items-center gap-3">
+              <Link 
+                to="/" 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all text-sm group backdrop-blur-sm"
+              >
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span>Home</span>
+              </Link>
 
-          <div className="flex flex-wrap items-center gap-6 text-white/50 text-sm border-y border-white/5 py-6">
-            {post.author && (
-              <div className="flex items-center gap-2">
-                <User size={16} className="text-emerald-500" />
-                <span className="font-medium">
-                  {typeof post.author === 'object' ? post.author.name : post.author}
-                </span>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <Clock size={16} className="text-emerald-500" />
-              <span>{new Date(post.createdAt || Date.now()).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}</span>
+              <Link 
+                to="/blog" 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-emerald-400 hover:text-emerald-300 hover:bg-white/10 hover:border-emerald-500/30 transition-all text-sm group backdrop-blur-sm"
+              >
+                <BookOpen size={16} />
+                <span>All Blogs</span>
+              </Link>
             </div>
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Tag size={16} className="text-emerald-500" />
-                <div className="flex gap-2">
-                  {post.tags.map((tag, i) => (
-                    <span key={i} className="hover:text-emerald-400 cursor-pointer transition-colors">#{tag}</span>
-                  ))}
+
+            <Link
+              to="/sitemap.html"
+              className="text-xs text-white/50 hover:text-emerald-400 transition-colors"
+            >
+              View Sitemap
+            </Link>
+          </div>
+
+          {/* Header Section */}
+          <header className="mb-12">
+            {post.category && (
+              <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold mb-6">
+                {post.category}
+              </span>
+            )}
+            
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight tracking-tight">
+              {post.title}
+            </h1>
+
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-white/50 text-sm border-y border-white/5 py-6">
+              {post.author && (
+                <div className="flex items-center gap-2">
+                  <User size={16} className="text-emerald-500" />
+                  <span className="font-medium">
+                    {typeof post.author === 'object' ? post.author.name : post.author}
+                  </span>
                 </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Clock size={16} className="text-emerald-500" />
+                <span>{new Date(post.createdAt || Date.now()).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</span>
               </div>
-            )}
-          </div>
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Tag size={16} className="text-emerald-500" />
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag, i) => (
+                      <span key={i} className="hover:text-emerald-400 cursor-pointer transition-colors">#{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
-          {/* Social Sharing Section */}
-          <div className="flex items-center gap-4 mt-8">
-            <span className="text-white/70 font-medium text-lg">Share:</span>
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
-                  window.open(url, '_blank', 'noreferrer');
-                }}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-[#0077b5] hover:text-white hover:scale-110 transition-all duration-300"
-                title="Share on LinkedIn"
-              >
-                <FaLinkedin size={20} />
-              </button>
-              <button
-                onClick={() => {
-                  const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
-                  window.open(url, '_blank', 'noreferrer');
-                }}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-black hover:text-white hover:scale-110 transition-all duration-300"
-                title="Share on X (Twitter)"
-              >
-                <FaXTwitter size={20} />
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  toast.success("Link copied to clipboard!", {
-                    style: {
-                      background: '#10b981',
-                      color: '#fff',
-                      borderRadius: '10px',
-                    }
-                  });
-                }}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-emerald-500 hover:text-white hover:scale-110 transition-all duration-300"
-                title="Copy Link"
-              >
-                <LinkIcon size={20} />
-              </button>
+            {/* Social Sharing Section */}
+            <div className="flex items-center gap-4 mt-8">
+              <span className="text-white/70 font-medium text-sm sm:text-base">Share:</span>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+                    window.open(url, '_blank', 'noreferrer');
+                  }}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-[#0077b5] hover:text-white hover:scale-110 transition-all duration-300"
+                  title="Share on LinkedIn"
+                >
+                  <FaLinkedin size={18} />
+                </button>
+                <button
+                  onClick={() => {
+                    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
+                    window.open(url, '_blank', 'noreferrer');
+                  }}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-black hover:text-white hover:scale-110 transition-all duration-300"
+                  title="Share on X (Twitter)"
+                >
+                  <FaXTwitter size={18} />
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard!", {
+                      style: {
+                        background: '#10b981',
+                        color: '#fff',
+                        borderRadius: '10px',
+                      }
+                    });
+                  }}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:bg-emerald-500 hover:text-white hover:scale-110 transition-all duration-300"
+                  title="Copy Link"
+                >
+                  <LinkIcon size={18} />
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Hero Image */}
+          {(post.image || post.coverImage) && (
+            <div className="w-full rounded-3xl overflow-hidden mb-12 shadow-2xl border border-white/10 aspect-video">
+              <img 
+                src={post.image || post.coverImage} 
+                alt={post.title} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          {/* Content Section */}
+          <div className="prose prose-invert prose-emerald max-w-none">
+            <div className="text-base sm:text-lg leading-relaxed text-white/80 blog-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {post.content}
+              </ReactMarkdown>
             </div>
           </div>
-        </header>
 
-        {/* Hero Image */}
-        {(post.image || post.coverImage) && (
-          <div className="w-full rounded-3xl overflow-hidden mb-12 shadow-2xl border border-white/10 aspect-video">
-            <img 
-              src={post.image || post.coverImage} 
-              alt={post.title} 
-              className="w-full h-full object-cover"
-            />
+          {/* Footer Callout */}
+          <div className="mt-16 sm:mt-20 pt-10 border-t border-white/10 flex flex-col items-center text-center gap-6">
+            <h3 className="text-xl sm:text-2xl font-bold">Enjoyed this article?</h3>
+            <p className="text-white/60 text-sm max-w-md">
+              Check out other articles in the blog directory or explore the rest of the portfolio.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link 
+                to="/blog" 
+                className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-full transition-all hover:scale-105 shadow-lg shadow-emerald-500/20"
+              >
+                More Articles
+              </Link>
+              <Link 
+                to="/" 
+                className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/15 transition-all hover:scale-105"
+              >
+                Explore Portfolio
+              </Link>
+            </div>
           </div>
-        )}
+        </article>
+      </main>
 
-        {/* Content Section */}
-        <div className="prose prose-invert prose-emerald max-w-none">
-          <div className="text-lg leading-relaxed text-white/80 blog-content">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {post.content}
-            </ReactMarkdown>
-          </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="mt-20 pt-12 border-t border-white/10 flex flex-col items-center gap-8">
-           <h3 className="text-2xl font-bold">Enjoyed this post?</h3>
-           <Link 
-            to="/" 
-            className="group relative px-10 py-4 bg-emerald-500 text-black font-bold rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95"
-          >
-            <span className="relative z-10">Explore My Portfolio</span>
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-          </Link>
-        </div>
-      </article>
+      {/* Global Revamped Footer */}
+      <Footer />
 
       <style dangerouslySetInnerHTML={{ __html: `
         .blog-content h2 { font-size: 2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1.25rem; color: #10b981; }
