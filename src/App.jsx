@@ -45,9 +45,9 @@ export default function App() {
         <Toaster position="top-right" />
 
         {/*  INTRO ANIMATION (Auto hides after greetings) */}
-        {showIntro && (
+        {/* {showIntro && (
           <IntroAnimation onFinish={() => setShowIntro(false)} />
-        )}
+        )} */}
 
         {/* Custom Cursor */}
         <CustomCursor />
