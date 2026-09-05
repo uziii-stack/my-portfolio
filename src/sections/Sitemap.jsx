@@ -20,7 +20,7 @@ import {
   Compass, 
   CheckCircle2 
 } from "lucide-react";
-import { FaGithub, FaLinkedin, FaFacebook, FaCode, FaRobot, FaSitemap } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaFacebook, FaCode } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Footer from "./Footer";
 
@@ -50,7 +50,7 @@ export default function Sitemap() {
     };
 
     fetchPosts();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
   const handleCopy = (url, label) => {
@@ -61,78 +61,33 @@ export default function Sitemap() {
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
-  // Core static pages and anchor sections
+  // Only legitimate standalone canonical pages (No anchor # fragments)
   const corePages = useMemo(() => [
     {
       title: "Portfolio Home",
       path: "/",
-      type: "Page",
+      type: "Canonical Page",
       category: "core",
-      description: "Main portfolio landing page featuring introduction, hero visual, and full developer overview.",
+      description: "Main portfolio landing page featuring introduction, tech stack, featured works, and developer profile.",
       priority: "1.0",
       changefreq: "weekly"
     },
     {
-      title: "About Me",
-      path: "/#about",
-      type: "Section",
-      category: "core",
-      description: "Background, technical philosophy, coding journey, and professional summary.",
-      priority: "0.9",
-      changefreq: "monthly"
-    },
-    {
-      title: "Technical Skills & Stack",
-      path: "/#skills",
-      type: "Section",
-      category: "core",
-      description: "Comprehensive breakdown of frontend, backend, database, and devops proficiencies.",
-      priority: "0.8",
-      changefreq: "monthly"
-    },
-    {
-      title: "Featured Projects",
-      path: "/#projects",
-      type: "Section",
-      category: "core",
-      description: "Curated collection of live client applications, platforms, and interactive works.",
-      priority: "0.9",
-      changefreq: "weekly"
-    },
-    {
-      title: "Work Experience & Timeline",
-      path: "/#experience",
-      type: "Section",
-      category: "core",
-      description: "Professional career history, engineering milestones, and responsibilities.",
-      priority: "0.8",
-      changefreq: "monthly"
-    },
-    {
-      title: "Client Testimonials",
-      path: "/#testimonials",
-      type: "Section",
-      category: "core",
-      description: "Client feedback, recommendations, and collaborative endorsements.",
-      priority: "0.7",
-      changefreq: "monthly"
-    },
-    {
-      title: "Contact & Inquiries",
-      path: "/#contact",
-      type: "Section",
-      category: "core",
-      description: "Direct contact form, communication channels, and consultation inquiries.",
-      priority: "0.8",
-      changefreq: "monthly"
-    },
-    {
-      title: "All Blog Articles Hub",
+      title: "Blog & Technical Articles Hub",
       path: "/blog",
-      type: "Page",
-      category: "blog",
-      description: "Full directory of published tech insights, engineering tutorials, and articles.",
+      type: "Canonical Page",
+      category: "core",
+      description: "Complete knowledge hub of software engineering guides, full-stack insights, and tutorials.",
       priority: "0.9",
+      changefreq: "daily"
+    },
+    {
+      title: "HTML Sitemap Directory",
+      path: "/sitemap.html",
+      type: "Canonical Page",
+      category: "core",
+      description: "Complete visual index and structure of all legitimate indexable pages across the website.",
+      priority: "0.8",
       changefreq: "daily"
     },
   ], []);
@@ -144,7 +99,7 @@ export default function Sitemap() {
       path: "https://www.nk.studio/",
       type: "External Project",
       category: "projects",
-      description: "Modern digital agency and creative showcase website.",
+      description: "Modern digital agency and creative studio showcase platform.",
       priority: "0.7",
       isExternal: true
     },
@@ -162,7 +117,7 @@ export default function Sitemap() {
       path: "https://www.eathungrytiger.com/",
       type: "External Project",
       category: "projects",
-      description: "Brand website and digital ordering platform for culinary brand.",
+      description: "Brand website and digital platform for culinary brand.",
       priority: "0.7",
       isExternal: true
     },
@@ -175,7 +130,7 @@ export default function Sitemap() {
       path: "https://github.com/uziii-stack",
       type: "Social Profile",
       category: "social",
-      description: "Open source contributions, repositories, and development activity.",
+      description: "Open source repositories, developer activity, and code projects.",
       priority: "0.8",
       isExternal: true
     },
@@ -184,7 +139,7 @@ export default function Sitemap() {
       path: "https://linkedin.com/in/uzair-baig-22b983385",
       type: "Social Profile",
       category: "social",
-      description: "Professional networking, career updates, and verified credentials.",
+      description: "Professional networking, career updates, and verified background.",
       priority: "0.8",
       isExternal: true
     },
@@ -193,7 +148,7 @@ export default function Sitemap() {
       path: "https://www.facebook.com/share/1BqGxYS5NX/?mibextid=wwXIfr",
       type: "Social Profile",
       category: "social",
-      description: "Social updates and media presence.",
+      description: "Social profile and community updates.",
       priority: "0.5",
       isExternal: true
     },
@@ -202,28 +157,28 @@ export default function Sitemap() {
       path: "mailto:uzairbaig040@gmail.com",
       type: "Direct Channel",
       category: "social",
-      description: "Direct email contact for contract, freelance, and job opportunities.",
+      description: "Direct email contact for freelance, contract, and full-time opportunities.",
       priority: "0.8",
       isExternal: true
     },
   ], []);
 
-  // Dynamic Blog Items
+  // Dynamic Individual Blog Article Pages (each is a genuine canonical URL)
   const dynamicBlogItems = useMemo(() => {
     return posts.map((post) => ({
       title: post.title || "Untitled Blog Post",
       path: `/blog/${post.slug || post._id}`,
       type: "Blog Article",
       category: "blog",
-      description: post.excerpt || (post.content ? post.content.substring(0, 110) + "..." : "Technical article and development guide."),
-      tag: post.category || "Development",
+      description: post.excerpt || (post.content ? post.content.substring(0, 120).replace(/[#*`_\[\]]/g, "").trim() + "..." : "Technical article and development guide."),
+      tag: post.category || "Engineering",
       priority: "0.8",
       changefreq: "monthly",
       date: post.createdAt ? new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : null
     }));
   }, [posts]);
 
-  // Combine all items
+  // Combine all legit items
   const allItems = useMemo(() => {
     return [
       ...corePages,
@@ -256,19 +211,17 @@ export default function Sitemap() {
   }, [allItems, activeTab, searchQuery]);
 
   const tabs = [
-    { id: "all", label: "All Links", count: allItems.length },
-    { id: "core", label: "Core Pages", count: corePages.length },
-    { id: "blog", label: "Blog & Articles", count: dynamicBlogItems.length + 1 },
+    { id: "all", label: "All Pages & Links", count: allItems.length },
+    { id: "core", label: "Main Pages", count: corePages.length },
+    { id: "blog", label: "Blog Articles", count: dynamicBlogItems.length },
     { id: "projects", label: "Live Projects", count: projectPages.length },
     { id: "social", label: "Connect & Social", count: socialChannels.length },
   ];
 
   const getTypeBadgeColor = (type) => {
     switch (type) {
-      case "Page":
+      case "Canonical Page":
         return "bg-purple-500/10 text-purple-400 border-purple-500/20";
-      case "Section":
-        return "bg-blue-500/10 text-blue-400 border-blue-500/20";
       case "Blog Article":
         return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
       case "External Project":
@@ -287,7 +240,7 @@ export default function Sitemap() {
         <title>HTML Sitemap | Uzair Baig Portfolio & Resources</title>
         <meta 
           name="description" 
-          content="Complete visual sitemap and index of all portfolio pages, technical skills, client projects, blog posts, and resources by Uzair Baig." 
+          content="Complete visual sitemap and index of all portfolio pages, technical articles, client projects, and resources by Uzair Baig." 
         />
         <link rel="canonical" href="https://uzairbaig.netlify.app/sitemap.html" />
         <meta name="robots" content="index, follow" />
@@ -328,21 +281,21 @@ export default function Sitemap() {
             </h1>
 
             <p className="text-white/60 text-base sm:text-lg max-w-2xl leading-relaxed">
-              Explore the complete hierarchy of pages, section anchors, technical articles, live projects, and public endpoints across this portfolio.
+              Explore the complete directory of legitimate standalone pages, published technical articles, client projects, and verified channels.
             </p>
           </div>
 
           {/* Key Stat Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8">
             <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm">
-              <div className="text-xs text-white/50 mb-1">Total Indexed Items</div>
+              <div className="text-xs text-white/50 mb-1">Total Indexed Pages</div>
               <div className="text-2xl font-bold text-white flex items-center gap-2">
                 {allItems.length}
                 <Sparkles className="w-4 h-4 text-emerald-400" />
               </div>
             </div>
             <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm">
-              <div className="text-xs text-white/50 mb-1">Core Sections</div>
+              <div className="text-xs text-white/50 mb-1">Canonical Pages</div>
               <div className="text-2xl font-bold text-purple-400">{corePages.length}</div>
             </div>
             <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm">
@@ -368,7 +321,7 @@ export default function Sitemap() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
             <input
               type="text"
-              placeholder="Search by page name, keyword, route, or topic..."
+              placeholder="Search by page title, keyword, route, or topic..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-white/40 text-sm sm:text-base focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/60 transition-all backdrop-blur-md"
@@ -415,7 +368,7 @@ export default function Sitemap() {
         {filteredItems.length === 0 ? (
           <div className="py-20 text-center rounded-3xl bg-white/[0.02] border border-white/10">
             <Compass className="w-12 h-12 text-white/30 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-1">No links matched your search</h3>
+            <h3 className="text-lg font-semibold text-white mb-1">No pages matched your search</h3>
             <p className="text-white/50 text-sm max-w-md mx-auto mb-6">
               Try searching with another keyword or reset the active filter tab.
             </p>
@@ -445,7 +398,7 @@ export default function Sitemap() {
                     className="p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-emerald-500/30 transition-all duration-200 flex flex-col justify-between group backdrop-blur-sm"
                   >
                     <div>
-                      {/* Card Header: Type Badge, Category & Priority */}
+                      {/* Card Header: Type Badge & Date */}
                       <div className="flex items-center justify-between gap-2 mb-3">
                         <span
                           className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${getTypeBadgeColor(
@@ -457,7 +410,7 @@ export default function Sitemap() {
 
                         <div className="flex items-center gap-2 text-[11px] text-white/40">
                           {item.priority && (
-                            <span title="Indexing Priority">P: {item.priority}</span>
+                            <span title="Indexing Priority">Priority: {item.priority}</span>
                           )}
                           {item.date && (
                             <span>• {item.date}</span>
@@ -509,19 +462,12 @@ export default function Sitemap() {
                             <span>Open</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
-                        ) : item.path.startsWith("/#") ? (
-                          <a
-                            href={item.path}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-emerald-500 hover:text-black border border-white/10 text-white text-xs font-semibold transition-all"
-                          >
-                            <span>Jump</span>
-                          </a>
                         ) : (
                           <Link
                             to={item.path}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-bold transition-all shadow-md shadow-emerald-500/20"
                           >
-                            <span>Navigate</span>
+                            <span>Visit Page</span>
                           </Link>
                         )}
                       </div>

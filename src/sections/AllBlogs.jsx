@@ -13,7 +13,9 @@ import {
   Heart,
   ChevronRight,
   Check,
+  Share2,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 import Footer from "./Footer";
 
@@ -101,6 +103,35 @@ export default function AllBlogs() {
       ...prev,
       [slug]: !prev[slug],
     }));
+  };
+
+  const handleNativeShare = async (e, post) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}/blog/${post.slug}`;
+    const shareTitle = post.title || "Blog Article by Uzair Baig";
+    const shareText = post.excerpt || `Check out "${post.title}" by Uzair Baig`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error sharing:", err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Article link copied to clipboard!");
+      } catch {
+        toast.error("Failed to copy link");
+      }
+    }
   };
 
   return (
@@ -360,14 +391,25 @@ export default function AllBlogs() {
                       <Link to={postLink}>{postTitle}</Link>
                     </h2>
 
-                    {/* Read More Action Link */}
-                    <Link
-                      to={postLink}
-                      className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-white/70 group-hover:text-white transition-colors"
-                    >
-                      <span>Read more</span>
-                      <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    {/* Card Actions: Read More + Native Share */}
+                    <div className="flex items-center justify-between gap-2 mt-1">
+                      <Link
+                        to={postLink}
+                        className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-white/70 group-hover:text-white transition-colors"
+                      >
+                        <span>Read more</span>
+                        <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                      </Link>
+
+                      <button
+                        onClick={(e) => handleNativeShare(e, post)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-300 border border-white/10 hover:border-emerald-500/30 text-[11px] sm:text-xs text-white/70 transition-all active:scale-95"
+                        title="Share article via Native OS"
+                      >
+                        <Share2 size={12} />
+                        <span>Share</span>
+                      </button>
+                    </div>
                   </div>
                 </motion.article>
               );

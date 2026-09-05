@@ -47,6 +47,39 @@ export default function BlogPost() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [slug]);
 
+  const handleNativeShare = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle = post?.title || document.title;
+    const shareText = post?.excerpt || `Check out this article "${post?.title}" by Uzair Baig`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error sharing:", err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!", {
+          style: {
+            background: "#10b981",
+            color: "#fff",
+            borderRadius: "10px",
+          },
+        });
+      } catch {
+        toast.error("Failed to copy link");
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col justify-between">
@@ -184,9 +217,20 @@ export default function BlogPost() {
             </div>
 
             {/* Social Sharing Section */}
-            <div className="flex items-center gap-4 mt-8">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-8">
               <span className="text-white/70 font-medium text-sm sm:text-base">Share:</span>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                {/* Native OS Share Button */}
+                <button
+                  onClick={handleNativeShare}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-black hover:scale-105 active:scale-95 transition-all duration-300 text-xs sm:text-sm font-semibold shadow-sm"
+                  title="Share via Native OS (Apps, AirDrop, Messages)"
+                >
+                  <Share2 size={15} />
+                  <span>Share</span>
+                </button>
+
+                {/* LinkedIn */}
                 <button
                   onClick={() => {
                     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
@@ -197,6 +241,8 @@ export default function BlogPost() {
                 >
                   <FaLinkedin size={18} />
                 </button>
+
+                {/* X (Twitter) */}
                 <button
                   onClick={() => {
                     const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
@@ -207,6 +253,8 @@ export default function BlogPost() {
                 >
                   <FaXTwitter size={18} />
                 </button>
+
+                {/* Copy Link */}
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
@@ -247,25 +295,71 @@ export default function BlogPost() {
             </div>
           </div>
 
-          {/* Footer Callout */}
-          <div className="mt-16 sm:mt-20 pt-10 border-t border-white/10 flex flex-col items-center text-center gap-6">
-            <h3 className="text-xl sm:text-2xl font-bold">Enjoyed this article?</h3>
-            <p className="text-white/60 text-sm max-w-md">
-              Check out other articles in the blog directory or explore the rest of the portfolio.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link 
-                to="/blog" 
-                className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-full transition-all hover:scale-105 shadow-lg shadow-emerald-500/20"
-              >
-                More Articles
-              </Link>
-              <Link 
-                to="/" 
-                className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/15 transition-all hover:scale-105"
-              >
-                Explore Portfolio
-              </Link>
+          {/* Bottom Share & Footer Callout */}
+          <div className="mt-16 sm:mt-20 pt-10 border-t border-white/10 space-y-8">
+            {/* Bottom Share Bar */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h4 className="text-base font-semibold text-white">Share this article</h4>
+                <p className="text-xs text-white/50">Pass along this insight with your network or friends.</p>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={handleNativeShare}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 text-black hover:bg-emerald-400 font-bold text-xs transition-all hover:scale-105 shadow-md shadow-emerald-500/20"
+                >
+                  <Share2 size={14} />
+                  <span>Share</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+                    window.open(url, '_blank', 'noreferrer');
+                  }}
+                  className="p-2.5 rounded-full bg-white/5 hover:bg-[#0077b5] text-white/80 hover:text-white border border-white/10 transition-all text-sm"
+                  title="Share on LinkedIn"
+                >
+                  <FaLinkedin size={16} />
+                </button>
+                <button
+                  onClick={() => {
+                    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`;
+                    window.open(url, '_blank', 'noreferrer');
+                  }}
+                  className="p-2.5 rounded-full bg-white/5 hover:bg-black text-white/80 hover:text-white border border-white/10 transition-all text-sm"
+                  title="Share on X"
+                >
+                  <FaXTwitter size={16} />
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard!");
+                  }}
+                  className="p-2.5 rounded-full bg-white/5 hover:bg-emerald-500 hover:text-black text-white/80 border border-white/10 transition-all text-sm"
+                  title="Copy Link"
+                >
+                  <LinkIcon size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Callout */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link 
+                  to="/blog" 
+                  className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-full transition-all hover:scale-105 shadow-lg shadow-emerald-500/20 text-sm"
+                >
+                  Browse All Articles
+                </Link>
+                <Link 
+                  to="/" 
+                  className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/15 transition-all hover:scale-105 text-sm"
+                >
+                  Explore Portfolio
+                </Link>
+              </div>
             </div>
           </div>
         </article>
