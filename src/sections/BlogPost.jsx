@@ -9,6 +9,120 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Footer from "./Footer";
 
+function BlogPostSkeleton() {
+  return (
+    <div className="min-h-screen bg-black text-white flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
+      {/* Background Ambient Glows */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div
+          className="absolute rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-400 opacity-10 blur-[160px]"
+          style={{ width: "50vw", height: "50vw", top: "-100px", left: "-100px" }}
+        />
+      </div>
+
+      <main className="flex-grow relative z-10">
+        <article className="pt-24 pb-20 px-4 sm:px-6 max-w-4xl mx-auto">
+          {/* Top Navigation Breadcrumbs Skeleton */}
+          <div className="flex items-center justify-between gap-4 mb-10">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-24 rounded-full bg-white/10 animate-pulse" />
+              <div className="h-9 w-28 rounded-full bg-white/10 animate-pulse" />
+            </div>
+            <div className="h-4 w-24 rounded bg-white/10 animate-pulse hidden sm:block" />
+          </div>
+
+          {/* Category Pill Skeleton */}
+          <div className="h-7 w-28 rounded-full bg-emerald-500/20 border border-emerald-500/30 mb-6 animate-pulse" />
+
+          {/* Headline Title Skeleton */}
+          <div className="space-y-3 mb-8">
+            <div className="h-10 sm:h-14 w-full sm:w-11/12 rounded-2xl bg-white/10 animate-pulse" />
+            <div className="h-10 sm:h-14 w-3/4 rounded-2xl bg-white/10 animate-pulse" />
+          </div>
+
+          {/* Meta Row Skeleton */}
+          <div className="flex flex-wrap items-center gap-6 py-6 border-y border-white/5 mb-8">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-white/10 animate-pulse" />
+              <div className="h-4 w-24 rounded bg-white/10 animate-pulse" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-white/10 animate-pulse" />
+              <div className="h-4 w-32 rounded bg-white/10 animate-pulse" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-white/10 animate-pulse" />
+              <div className="h-4 w-20 rounded bg-white/10 animate-pulse" />
+            </div>
+          </div>
+
+          {/* Share Buttons Row Skeleton */}
+          <div className="flex items-center gap-4 mb-10">
+            <div className="h-4 w-12 rounded bg-white/10 animate-pulse" />
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-20 rounded-full bg-white/10 animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse" />
+            </div>
+          </div>
+
+          {/* Hero Featured Image Skeleton */}
+          <div className="w-full aspect-video rounded-3xl bg-white/[0.07] border border-white/10 mb-12 animate-pulse" />
+
+          {/* Article Body Content Skeleton */}
+          <div className="space-y-6 max-w-none">
+            <div className="space-y-3">
+              <div className="h-4 w-full rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-11/12 rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-full rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-4/5 rounded bg-white/10 animate-pulse" />
+            </div>
+
+            {/* Subheading Skeleton */}
+            <div className="pt-4">
+              <div className="h-8 w-2/5 rounded-xl bg-white/10 animate-pulse mb-4" />
+              <div className="space-y-3">
+                <div className="h-4 w-full rounded bg-white/10 animate-pulse" />
+                <div className="h-4 w-5/6 rounded bg-white/10 animate-pulse" />
+                <div className="h-4 w-10/12 rounded bg-white/10 animate-pulse" />
+              </div>
+            </div>
+
+            {/* Blockquote / Code Skeleton */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border-l-4 border-emerald-500/40 border border-white/5 my-8 space-y-2.5">
+              <div className="h-4 w-11/12 rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-4/5 rounded bg-white/10 animate-pulse" />
+            </div>
+
+            <div className="space-y-3">
+              <div className="h-4 w-full rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-9/12 rounded bg-white/10 animate-pulse" />
+            </div>
+          </div>
+
+          {/* Bottom Share Box Skeleton */}
+          <div className="mt-16 sm:mt-20 pt-10 border-t border-white/10">
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-2 w-full sm:w-1/2">
+                <div className="h-5 w-36 rounded bg-white/10 animate-pulse" />
+                <div className="h-3.5 w-60 rounded bg-white/10 animate-pulse" />
+              </div>
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-20 rounded-full bg-white/10 animate-pulse" />
+                <div className="w-9 h-9 rounded-full bg-white/10 animate-pulse" />
+                <div className="w-9 h-9 rounded-full bg-white/10 animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </article>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
 export default function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
@@ -81,15 +195,7 @@ export default function BlogPost() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex flex-col justify-between">
-        <div className="flex-grow flex flex-col items-center justify-center p-4">
-          <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-emerald-500 animate-spin mb-4"></div>
-          <p className="text-white/60 animate-pulse text-lg">Loading post...</p>
-        </div>
-        <Footer />
-      </div>
-    );
+    return <BlogPostSkeleton />;
   }
 
   if (error || !post) {
