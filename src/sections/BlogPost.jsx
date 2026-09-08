@@ -490,6 +490,7 @@ export default function BlogPost() {
         .blog-content blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; font-style: italic; color: #d1d5db; background: rgba(16, 185, 129, 0.05); border-radius: 0 0.5rem 0.5rem 0; margin: 2rem 0; }
         .blog-content pre, .blog-content pre.ql-syntax { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; margin: 2rem 0; color: #38bdf8; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.95rem; }
         .blog-content img { border-radius: 1.5rem; margin: 2.5rem 0; border: 1px solid rgba(255,255,255,0.1); width: 100%; height: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .blog-content iframe, .blog-content .ql-video { width: 100%; aspect-ratio: 16 / 9; border-radius: 1.5rem; margin: 2.5rem 0; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .blog-content a { color: #10b981; text-decoration: underline; text-underline-offset: 4px; transition: all 0.2s; }
         .blog-content a:hover { color: #34d399; opacity: 0.8; }
         .blog-content code:not(pre code) { background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; color: #34d399; }
