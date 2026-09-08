@@ -54,9 +54,13 @@ function renderInline(text) {
   return s;
 }
 
-// Helper: Convert full markdown post content into safe semantic HTML
+// Helper: Convert full markdown or rich HTML post content into safe semantic HTML
 function renderMarkdownToHtml(markdown) {
   if (!markdown) return "";
+  // If content is already rich HTML (from Quill Editor), return it directly
+  if (/<[a-z][\s\S]*>/i.test(markdown)) {
+    return markdown;
+  }
   const text = String(markdown).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const blocks = text.split(/\n\n+/);
   const htmlBlocks = [];
