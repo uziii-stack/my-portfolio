@@ -395,9 +395,13 @@ export default function BlogPost() {
           {/* Content Section */}
           <div className="prose prose-invert prose-emerald max-w-none">
             <div className="text-base sm:text-lg leading-relaxed text-white/80 blog-content">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {post.content}
-              </ReactMarkdown>
+              {post.content && /<[a-z][\s\S]*>/i.test(post.content) ? (
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              ) : (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {post.content}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
 
@@ -475,18 +479,20 @@ export default function BlogPost() {
       <Footer />
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .blog-content h2 { font-size: 2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1.25rem; color: #10b981; }
-        .blog-content h3 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; color: #34d399; }
-        .blog-content p { margin-bottom: 1.75rem; line-height: 1.9; color: rgba(255, 255, 255, 0.85); white-space: pre-line; }
-        .blog-content ul { list-style-type: none; padding-left: 0; margin-bottom: 2rem; }
-        .blog-content li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: rgba(255, 255, 255, 0.8); }
-        .blog-content li::before { content: "•"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
-        .blog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8); }
-        .blog-content blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; font-style: italic; color: #d1d5db; background: rgba(16, 185, 129, 0.05); border-radius: 0 0.5rem 0.5rem 0; margin: 2.5rem 0; }
-        .blog-content img { border-radius: 1.5rem; margin: 3rem 0; border: 1px solid rgba(255,255,255,0.1); width: 100%; height: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 1.25rem; color: #10b981; }
+        .blog-content h2 { font-size: 1.85rem; font-weight: 700; margin-top: 2.25rem; margin-bottom: 1.15rem; color: #34d399; }
+        .blog-content h3 { font-size: 1.45rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.9rem; color: #6ee7b7; }
+        .blog-content p { margin-bottom: 1.5rem; line-height: 1.85; color: rgba(255, 255, 255, 0.85); }
+        .blog-content ul { list-style-type: disc; padding-left: 1.75rem; margin-bottom: 1.75rem; }
+        .blog-content ul li { margin-bottom: 0.5rem; color: rgba(255, 255, 255, 0.85); }
+        .blog-content ol { list-style-type: decimal; padding-left: 1.75rem; margin-bottom: 1.75rem; }
+        .blog-content ol li { list-style-type: decimal; margin-bottom: 0.5rem; color: rgba(255, 255, 255, 0.85); }
+        .blog-content blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; font-style: italic; color: #d1d5db; background: rgba(16, 185, 129, 0.05); border-radius: 0 0.5rem 0.5rem 0; margin: 2rem 0; }
+        .blog-content pre, .blog-content pre.ql-syntax { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; margin: 2rem 0; color: #38bdf8; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.95rem; }
+        .blog-content img { border-radius: 1.5rem; margin: 2.5rem 0; border: 1px solid rgba(255,255,255,0.1); width: 100%; height: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .blog-content a { color: #10b981; text-decoration: underline; text-underline-offset: 4px; transition: all 0.2s; }
         .blog-content a:hover { color: #34d399; opacity: 0.8; }
-        .blog-content code { background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; }
+        .blog-content code:not(pre code) { background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; color: #34d399; }
       `}} />
     </motion.div>
   );
