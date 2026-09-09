@@ -1,7 +1,7 @@
 /**
  * Netlify Edge Function: sitemap
- * Dynamically generates a valid XML sitemap including the portfolio homepage
- * and all live published blog post URLs fetched from the backend API.
+ * Dynamically generates a valid XML sitemap including the portfolio homepage,
+ * HTML sitemap, and all live published blog post URLs fetched from the backend API.
  */
 
 function escapeXml(str) {
@@ -16,20 +16,23 @@ function escapeXml(str) {
 
 export default async () => {
   try {
-    const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts?author=admin";
-    const res = await fetch(apiUrl);
-
-    if (!res.ok) {
-      return new Response("Failed to fetch posts from API", {
-        status: 502,
-        headers: { "content-type": "text/plain; charset=UTF-8" },
-      });
-    }
-
-    const data = await res.json();
-    const posts = Array.isArray(data) ? data : (data.posts || data.data || []);
-
+    let posts = [];
     const now = new Date().toISOString().split("T")[0];
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const apiUrl = "https://my-blog-backend-phi.vercel.app/api/posts?author=admin";
+      const res = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        posts = Array.isArray(data) ? data : (data.posts || data.data || []);
+      }
+    } catch (fetchErr) {
+      console.warn("Sitemap post fetch timed out/failed:", fetchErr.message);
+    }
 
     let urlsXml = `  <url>
     <loc>https://uzairbaig.netlify.app/</loc>
@@ -81,7 +84,8 @@ ${urlsXml}</urlset>
       status: 200,
       headers: {
         "content-type": "application/xml; charset=UTF-8",
-        "cache-control": "public, max-age=3600, s-maxage=3600",
+        "cache-control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+        "Netlify-CDN-Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
       },
     });
   } catch (error) {
