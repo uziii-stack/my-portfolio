@@ -43,7 +43,7 @@ const mainNavLinks = [
 const resourceLinks = [
   { name: "All Blog Posts", href: "/blog", isInternal: true },
   { name: "Latest Insights", href: "/#blog", isInternal: false },
-  { name: "HTML Sitemap", href: "/sitemap.html", isInternal: true, badge: "Pages Map" },
+  { name: "Sitemap", href: "/sitemap", isInternal: true, badge: "Pages Map" },
 ];
 
 const featuredProjects = [
@@ -197,7 +197,7 @@ export default function Footer() {
 
             <div className="pt-3">
               <Link
-                to="/sitemap.html"
+                to="/sitemap"
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-medium transition-all group"
               >
                 <FaCompass className="text-emerald-400 group-hover:rotate-45 transition-transform duration-300" />
@@ -239,9 +239,9 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} <span className="text-white font-medium">Uzair Baig</span>. All rights reserved.
             </span>
             <span className="hidden sm:inline text-white/20">•</span>
-            <Link to="/sitemap.html" className="text-white/70 hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+            <Link to="/sitemap" className="text-white/70 hover:text-emerald-400 transition-colors flex items-center gap-1.5">
               <FaFileCode className="text-[11px] text-emerald-400" />
-              <span>Sitemap (HTML)</span>
+              <span>Sitemap</span>
             </Link>
           </div>
 

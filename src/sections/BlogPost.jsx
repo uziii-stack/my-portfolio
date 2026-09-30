@@ -274,7 +274,7 @@ export default function BlogPost() {
             </div>
 
             <Link
-              to="/sitemap.html"
+              to="/sitemap"
               className="text-xs text-white/50 hover:text-emerald-400 transition-colors"
             >
               View Sitemap

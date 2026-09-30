@@ -12,7 +12,7 @@ const navItems = [
   { name: "Testimonials", href: "/#testimonials", isAnchor: true },
   { name: "Blog", href: "/blog", isRoute: true },
   { name: "Contact", href: "/#contact", isAnchor: true },
-  { name: "Sitemap", href: "/sitemap.html", isRoute: true },
+  { name: "Sitemap", href: "/sitemap", isRoute: true },
 ];
 
 export default function OverlayMenu({ isOpen, onClose }) {

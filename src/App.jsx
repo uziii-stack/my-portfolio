@@ -62,8 +62,8 @@ export default function App() {
           <Route path="/blog" element={<AllBlogs />} />
           <Route path="/blogs" element={<AllBlogs />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/sitemap.html" element={<Sitemap />} />
           <Route path="/sitemap" element={<Sitemap />} />
+          <Route path="/sitemap.html" element={<Sitemap />} />
         </Routes>
 
         <ScrollToTop />

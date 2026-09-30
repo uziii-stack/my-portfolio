@@ -82,8 +82,8 @@ export default function Sitemap() {
       changefreq: "daily"
     },
     {
-      title: "HTML Sitemap Directory",
-      path: "/sitemap.html",
+      title: "Sitemap Directory",
+      path: "/sitemap",
       type: "Canonical Page",
       category: "core",
       description: "Complete visual index and structure of all legitimate indexable pages across the website.",
@@ -237,12 +237,12 @@ export default function Sitemap() {
   return (
     <div className="min-h-screen bg-[#050508] text-white flex flex-col selection:bg-emerald-500 selection:text-black">
       <Helmet>
-        <title>HTML Sitemap | Uzair Baig Portfolio & Resources</title>
+        <title>Sitemap | Uzair Baig Portfolio & Resources</title>
         <meta 
           name="description" 
           content="Complete visual sitemap and index of all portfolio pages, technical articles, client projects, and resources by Uzair Baig." 
         />
-        <link rel="canonical" href="https://uzairbaig.netlify.app/sitemap.html" />
+        <link rel="canonical" href="https://uzairbaig.netlify.app/sitemap" />
         <meta name="robots" content="index, follow" />
       </Helmet>
 
@@ -266,7 +266,7 @@ export default function Sitemap() {
             <div className="hidden sm:flex items-center gap-2 text-xs text-white/50">
               <Link to="/" className="hover:text-emerald-400 transition-colors">Home</Link>
               <span>/</span>
-              <span className="text-white/80 font-medium">Sitemap.html</span>
+              <span className="text-white/80 font-medium">Sitemap</span>
             </div>
           </div>
 
@@ -277,7 +277,7 @@ export default function Sitemap() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
-              HTML Sitemap Directory
+              Sitemap Directory
             </h1>
 
             <p className="text-white/60 text-base sm:text-lg max-w-2xl leading-relaxed">
